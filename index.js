@@ -2,7 +2,7 @@ const Octokit = require("@octokit/rest");
 const logger = require("./log");
 const source = require("./source");
 const getSecrets = require("./env");
-const getMatchingConfig = require("./matchChanges");
+const changes = require("./changes");
 
 const respondSuccess = (callback, body) =>
     callback(null, {
@@ -68,7 +68,7 @@ module.exports.handler = async (event, context, callback) => {
 
     logger.log("Changed files", changedFiles);
 
-    const finalConfig = getMatchingConfig({
+    const finalConfig = changes.getMatchingConfig({
         parsedConfig,
         changedFiles,
         droneEvent: body.build.event

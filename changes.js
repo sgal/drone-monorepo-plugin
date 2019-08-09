@@ -8,15 +8,27 @@ const noopConfig = index => `kind: pipeline
       exclude: [ "*" ]
 `;
 
-const hasChangesetTrigger = changeset =>
-    changeset && (changeset.include || changeset.exclude);
+const hasChangesetTrigger = changeset => {
+    if (!changeset) return false;
+    if (Array.isArray(changeset)) return changeset.length > 0;
 
-const isMatchingEvent = (eventTrigger, event) =>
-    eventTrigger.include && eventTrigger.include.indexOf(event) > -1;
+    return changeset.include || changeset.exclude;
+};
+
+const getIncludeTriggers = triggerConfig =>
+    Array.isArray(triggerConfig) ? triggerConfig : triggerConfig.include;
+
+const isMatchingEvent = (eventTrigger, event) => {
+    const includeTriggers = getIncludeTriggers(eventTrigger);
+    if (!includeTriggers) return false;
+
+    return includeTriggers.indexOf(event) > -1;
+};
 
 const matchChanges = (triggerConfig, changedFiles) => {
-    if (triggerConfig.include) {
-        return mm(changedFiles, triggerConfig.include).length > 0;
+    const includeTriggers = getIncludeTriggers(triggerConfig);
+    if (includeTrigger) {
+        return mm(changedFiles, includeTriggers).length > 0;
     }
 
     if (triggerConfig.exclude) {
@@ -65,4 +77,11 @@ const getMatchingConfig = ({parsedConfig, changedFiles, droneEvent}) => {
     return filteredConfig.join("\n---\n");
 };
 
-module.exports = getMatchingConfig;
+module.exports = {
+    hasChangesetTrigger,
+    getIncludeTriggers,
+    isMatchingEvent,
+    matchChanges,
+    filterSteps,
+    getMatchingConfig
+};
