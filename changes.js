@@ -42,7 +42,7 @@ const matchChanges = (triggerConfig, changedFiles) => {
 const filterSteps = (steps, changedFiles) =>
     steps.filter(step => {
         const trigger = step.when || {};
-        if (!hasChangesetTrigger(trigger)) return true;
+        if (!hasChangesetTrigger(trigger.changeset)) return true;
 
         return matchChanges(trigger.changeset, changedFiles);
     }, []);

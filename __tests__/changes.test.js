@@ -154,4 +154,31 @@ describe("changes", () => {
             expect(result).toBe(true);
         });
     });
+
+    describe("filterSteps", () => {
+        it("should return original steps if none of them have changeset triggers", () => {
+            const changes = require("../changes");
+            const steps = [{}, {}];
+            const changedFiles = ["cli.js", "index.js"];
+            const result = changes.filterSteps(steps, changedFiles);
+
+            expect(result).toEqual(steps);
+        });
+
+        it("should filter out steps that do not match the changeset triggers", () => {
+            const changes = require("../changes");
+            const steps = [
+                {
+                    when: {
+                        changeset: ["*.md"]
+                    }
+                },
+                {}
+            ];
+            const changedFiles = ["cli.js", "index.js"];
+            const result = changes.filterSteps(steps, changedFiles);
+
+            expect(result).toEqual([steps[1]]);
+        });
+    });
 });
