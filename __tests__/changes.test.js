@@ -81,4 +81,30 @@ describe("changes", () => {
             expect(result).toBe(trigger.include);
         });
     });
+
+    describe("isMatchingEvent", () => {
+        it("should return false if there are no include triggers in the triggerConfig", () => {
+            const changes = require("../changes");
+            const trigger = {};
+            const result = changes.isMatchingEvent(trigger, "push");
+
+            expect(result).toBe(false);
+        });
+
+        it("should return false if event does not match any of the include triggers", () => {
+            const changes = require("../changes");
+            const trigger = {include: ["push"]};
+            const result = changes.isMatchingEvent(trigger, "pull_request");
+
+            expect(result).toBe(false);
+        });
+
+        it("should return true if event matches some of the include triggers", () => {
+            const changes = require("../changes");
+            const trigger = {include: ["push"]};
+            const result = changes.isMatchingEvent(trigger, "push");
+
+            expect(result).toBe(true);
+        });
+    });
 });
