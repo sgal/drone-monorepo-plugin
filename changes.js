@@ -12,7 +12,8 @@ const hasChangesetTrigger = changeset => {
     if (!changeset) return false;
     if (Array.isArray(changeset)) return changeset.length > 0;
 
-    return changeset.include || changeset.exclude;
+    const changesetConfig = changeset.include || changeset.exclude || [];
+    return changesetConfig.length > 0;
 };
 
 const getIncludeTriggers = triggerConfig =>
