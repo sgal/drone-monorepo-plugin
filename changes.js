@@ -28,7 +28,7 @@ const isMatchingEvent = (eventTrigger, event) => {
 
 const matchChanges = (triggerConfig, changedFiles) => {
     const includeTriggers = getIncludeTriggers(triggerConfig);
-    if (includeTrigger) {
+    if (includeTriggers) {
         return mm(changedFiles, includeTriggers).length > 0;
     }
 

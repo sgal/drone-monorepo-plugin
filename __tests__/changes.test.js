@@ -107,4 +107,51 @@ describe("changes", () => {
             expect(result).toBe(true);
         });
     });
+
+    describe("matchChanges", () => {
+        it("should return false if neither include nor exclude filters are set", () => {
+            const changes = require("../changes");
+            const changedFiles = ["package.json", "index.js"];
+            const trigger = {};
+            const result = changes.matchChanges(trigger, changedFiles);
+
+            expect(result).toBe(false);
+        });
+
+        it("should return false if changed files do not match the include trigger", () => {
+            const changes = require("../changes");
+            const changedFiles = ["package.json", "index.js"];
+            const trigger = {include: ["*.md"]};
+            const result = changes.matchChanges(trigger, changedFiles);
+
+            expect(result).toBe(false);
+        });
+
+        it("should return true if changed files match the include trigger", () => {
+            const changes = require("../changes");
+            const changedFiles = ["package.json", "index.js"];
+            const trigger = {include: ["*.js"]};
+            const result = changes.matchChanges(trigger, changedFiles);
+
+            expect(result).toBe(true);
+        });
+
+        it("should return false if changed files match the exclude trigger", () => {
+            const changes = require("../changes");
+            const changedFiles = ["cli.js", "index.js"];
+            const trigger = {exclude: ["*.js"]};
+            const result = changes.matchChanges(trigger, changedFiles);
+
+            expect(result).toBe(false);
+        });
+
+        it("should return true if changed files do not match the exclude trigger", () => {
+            const changes = require("../changes");
+            const changedFiles = ["cli.js", "index.js"];
+            const trigger = {exclude: ["*.md"]};
+            const result = changes.matchChanges(trigger, changedFiles);
+
+            expect(result).toBe(true);
+        });
+    });
 });
