@@ -95,7 +95,7 @@ describe("index.handler", () => {
         expect(logMock).toBeCalledWith("No config found");
     });
 
-    it("should respond with rawConfig if config is valid", async () => {
+    it("should respond with filteredConfig if config is valid", async () => {
         const rawConfig = "123";
         mockSecrets({github: "123", plugin: "123"});
         mockOctokit();
@@ -120,7 +120,7 @@ describe("index.handler", () => {
         await index.handler(mockEvent, {}, callback);
         expect(callback).toBeCalledWith(null, {
             statusCode: 200,
-            body: rawConfig
+            body: JSON.stringify({Data: ""})
         });
     });
 });

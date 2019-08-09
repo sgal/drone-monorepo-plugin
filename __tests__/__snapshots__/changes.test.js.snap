@@ -1,0 +1,109 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`changes getMatchingConfig should disable pipeline which changeset trigger does not match changed files 1`] = `
+"kind: pipeline
+name: build
+steps:
+  - name: build
+    image: node:10.15.3
+    commands:
+      - export TZ=Europe/Stockholm
+      - curl -o- -L https://yarnpkg.com/install.sh | bash -s -- --version 1.16.0
+      - export PATH=\\"$HOME/.yarn/bin:$PATH\\"
+      - yarn install --ignore-optional --frozen-lockfile
+      - yarn build
+trigger:
+  event:
+    exclude:
+      - \\"*\\"
+
+---
+kind: secret
+name: access_id
+get:
+  path: prod/aws
+  name: access_key_id
+"
+`;
+
+exports[`changes getMatchingConfig should filter out steps which changeset trigger does not match the changes 1`] = `
+"kind: pipeline
+name: build
+steps:
+  - name: build
+    image: node:10.15.3
+    commands:
+      - npm run build
+    when:
+      changeset:
+        - \\"*.js\\"
+trigger:
+  branch:
+    - master
+  event:
+    - push
+"
+`;
+
+exports[`changes getMatchingConfig should replace pipelines where all steps are filtered out with noop config 1`] = `
+"kind: pipeline
+  name: default_0
+  trigger:
+    event:
+      exclude: [ \\"*\\" ]
+"
+`;
+
+exports[`changes getMatchingConfig should return config with no changes if event trigger does not match the drone event 1`] = `
+"kind: pipeline
+name: build
+steps:
+  - name: build
+    image: node:10.15.3
+    commands:
+      - export TZ=Europe/Stockholm
+      - curl -o- -L https://yarnpkg.com/install.sh | bash -s -- --version 1.16.0
+      - export PATH=\\"$HOME/.yarn/bin:$PATH\\"
+      - yarn install --ignore-optional --frozen-lockfile
+      - yarn build
+trigger:
+  branch:
+    - master
+  event:
+    - push
+
+---
+kind: secret
+name: access_id
+get:
+  path: prod/aws
+  name: access_key_id
+"
+`;
+
+exports[`changes getMatchingConfig should return config with no changes if no changeset triggers are present 1`] = `
+"kind: pipeline
+name: build
+steps:
+  - name: build
+    image: node:10.15.3
+    commands:
+      - export TZ=Europe/Stockholm
+      - curl -o- -L https://yarnpkg.com/install.sh | bash -s -- --version 1.16.0
+      - export PATH=\\"$HOME/.yarn/bin:$PATH\\"
+      - yarn install --ignore-optional --frozen-lockfile
+      - yarn build
+trigger:
+  branch:
+    - master
+  event:
+    - push
+
+---
+kind: secret
+name: access_id
+get:
+  path: prod/aws
+  name: access_key_id
+"
+`;
