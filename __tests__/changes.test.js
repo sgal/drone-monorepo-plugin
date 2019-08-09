@@ -63,4 +63,22 @@ describe("changes", () => {
             expect(result).toBe(false);
         });
     });
+
+    describe("getIncludeTriggers", () => {
+        it("should return triggerConfig param if it is an array", () => {
+            const changes = require("../changes");
+            const trigger = [];
+            const result = changes.getIncludeTriggers(trigger);
+
+            expect(result).toBe(trigger);
+        });
+
+        it("should return triggerConfig's 'include' value if trigger is an object", () => {
+            const changes = require("../changes");
+            const trigger = {include: []};
+            const result = changes.getIncludeTriggers(trigger);
+
+            expect(result).toBe(trigger.include);
+        });
+    });
 });
