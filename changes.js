@@ -56,17 +56,16 @@ const getMatchingConfig = ({parsedConfig, changedFiles, droneEvent}) => {
             return yaml.stringify(configObj);
         }
 
-        if (!hasChangesetTrigger(trigger.changeset)) {
-            return yaml.stringify(configObj);
-        }
+        if (hasChangesetTrigger(trigger.changeset)) {
+            const hasMatchingChanges = matchChanges(
+                configObj.trigger.changeset,
+                changedFiles
+            );
 
-        const hasMatchingChanges = matchChanges(
-            configObj.trigger.changeset,
-            changedFiles
-        );
-        if (!hasMatchingChanges) {
-            configObj.trigger = {event: {exclude: ["*"]}};
-            return yaml.stringify(configObj);
+            if (!hasMatchingChanges) {
+                configObj.trigger = {event: {exclude: ["*"]}};
+                return yaml.stringify(configObj);
+            }
         }
 
         const matchingSteps = filterSteps(configObj.steps, changedFiles);

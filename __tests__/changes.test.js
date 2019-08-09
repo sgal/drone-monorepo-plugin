@@ -1,3 +1,5 @@
+const configFixtures = require("../__fixtures__/config");
+
 describe("changes", () => {
     describe("hasChangesetTrigger", () => {
         it("should return false if changeset param is null", () => {
@@ -179,6 +181,78 @@ describe("changes", () => {
             const result = changes.filterSteps(steps, changedFiles);
 
             expect(result).toEqual([steps[1]]);
+        });
+    });
+
+    describe("getMatchingConfig", () => {
+        it("should return config with no changes if no changeset triggers are present", () => {
+            const changes = require("../changes");
+            const config = configFixtures.noChangesetConfig;
+            const changedFiles = ["index.js", "package.json"];
+            const event = "push";
+
+            const result = changes.getMatchingConfig({
+                parsedConfig: config,
+                changedFiles,
+                droneEvent: event
+            });
+            expect(result).toMatchSnapshot();
+        });
+
+        it("should return config with no changes if event trigger does not match the drone event", () => {
+            const changes = require("../changes");
+            const config = configFixtures.noChangesetConfig;
+            const changedFiles = ["index.js", "package.json"];
+            const event = "pull_request";
+
+            const result = changes.getMatchingConfig({
+                parsedConfig: config,
+                changedFiles,
+                droneEvent: event
+            });
+            expect(result).toMatchSnapshot();
+        });
+
+        it("should disable pipeline which changeset trigger does not match changed files", () => {
+            const changes = require("../changes");
+            const config = configFixtures.getPipelineChangesetConfig(["*.js"]);
+            const changedFiles = ["README.md", "package.json"];
+            const event = "push";
+
+            const result = changes.getMatchingConfig({
+                parsedConfig: config,
+                changedFiles,
+                droneEvent: event
+            });
+            expect(result).toMatchSnapshot();
+        });
+
+        it("should filter out steps which changeset trigger does not match the changes", () => {
+            const changes = require("../changes");
+            const config = configFixtures.stepsChangesetConfig;
+            const changedFiles = ["index.js", "package.json"];
+            const event = "push";
+
+            const result = changes.getMatchingConfig({
+                parsedConfig: config,
+                changedFiles,
+                droneEvent: event
+            });
+            expect(result).toMatchSnapshot();
+        });
+
+        it("should replace pipelines where all steps are filtered out with noop config", () => {
+            const changes = require("../changes");
+            const config = configFixtures.getConfigWithStepsChangeset(["*.md"]);
+            const changedFiles = ["index.js", "package.json"];
+            const event = "push";
+
+            const result = changes.getMatchingConfig({
+                parsedConfig: config,
+                changedFiles,
+                droneEvent: event
+            });
+            expect(result).toMatchSnapshot();
         });
     });
 });
