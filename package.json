@@ -17,7 +17,7 @@
         "@octokit/rest": "^16.28.6",
         "yaml": "^1.6.0",
         "http-signature": "^1.2.0",
-        "aws-sdk": "^2.500.0"
+        "aws-sdk": "^2.814.0"
     },
     "devDependencies": {
         "jest": "^24.8.0",
